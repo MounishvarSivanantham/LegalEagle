@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_OPENAI_MODEL: str = "gpt-4o-mini"
 
 # Strict legal assistant system prompt
-SYSTEM_PROMPT = """You are LegalEagle, an AI contract assistant. Your goal is to explain contract terms and answer user questions clearly, accurately, and in plain English.
+SYSTEM_PROMPT = """You are LegalDocuLex-AI, an AI contract assistant. Your goal is to explain contract terms and answer user questions clearly, accurately, and in plain English.
 
 CRITICAL GUIDELINES:
 1. Strict Grounding: Use ONLY the provided contract excerpts to answer document-specific claims. Do NOT assume, extrapolate, or invent terms, rights, dates, figures, or obligations not present in the excerpts.
@@ -286,7 +286,7 @@ def answer_contract_question(
 
         # Append standard educational disclaimer if not already stated
         disclaimer = (
-            "\n\n*Disclaimer: LegalEagle provides informational contract analysis "
+            "\n\n*Disclaimer: LegalDocuLex-AI provides informational contract analysis "
             "and is not a substitute for formal legal advice.*"
         )
         if "disclaimer" not in answer_text.lower():
@@ -308,9 +308,9 @@ def answer_contract_question(
         # Provide beginner-friendly explanations without leaking secrets
         e_str = str(e).lower()
         if "AuthenticationError" in error_name or "invalid_api_key" in e_str or "unauthorized" in e_str:
-            user_msg = "Invalid OpenAI API key. Please check the key provided in your .env or secrets."
+            user_msg = "Invalid OpenAI API key. Please check the key provided in your .env or sidebar."
         elif "RateLimitError" in error_name or "insufficient_quota" in e_str or "ratelimit" in e_str or "quota" in e_str:
-            user_msg = "OpenAI rate limit or quota exceeded. Please verify your account usage and billing."
+            user_msg = "OpenAI rate limit or quota exceeded. Please check your account usage/credits at https://platform.openai.com/settings/organization/billing/ or update your key in the sidebar."
         elif "APITimeoutError" in error_name or "timeout" in e_str or "timed out" in e_str:
             user_msg = "OpenAI API request timed out. Please check your network and try again."
         elif "APIConnectionError" in error_name or "connection" in e_str:
@@ -318,9 +318,27 @@ def answer_contract_question(
         else:
             user_msg = f"OpenAI API call failed ({error_name}): {e}"
 
+        # Extractive fallback: if passages were retrieved, present the most relevant clause text
+        fallback_answer = ""
+        if passages:
+            best_passages = passages[:2]
+            excerpt_lines = []
+            for idx, p in enumerate(best_passages, 1):
+                doc_name = p.get("filename", "Document")
+                page_num = p.get("page_number", "?")
+                text_snippet = p.get("text", "").strip()
+                excerpt_lines.append(f"**Excerpt {idx} [{doc_name}, Page {page_num}]:**\n> \"{text_snippet}\"")
+
+            fallback_answer = (
+                "### 📑 Extracted Contract Excerpts\n"
+                "*The OpenAI API quota was exceeded on your account, but LegalDocuLex-AI successfully retrieved these matching clauses from your contract:* \n\n"
+                + "\n\n".join(excerpt_lines)
+                + "\n\n*Disclaimer: LegalDocuLex-AI provides informational contract analysis and is not a substitute for formal legal advice.*"
+            )
+
         return QAResult(
             question=clean_question,
-            answer="",
+            answer=fallback_answer,
             sources=passages,
             filename=filename,
             model=model,
@@ -341,7 +359,7 @@ def export_conversation_to_markdown(
     import datetime
     timestamp_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     lines = [
-        "# LegalEagle AI Contract Assistant — Conversation Transcript",
+        "# LegalDocuLex-AI AI Contract Assistant — Conversation Transcript",
         f"**Generated:** {timestamp_str}",
         f"**Active Document Context:** {document_filter or 'All Documents'}",
         f"**Total Messages:** {len(chat_history)}",
@@ -362,7 +380,7 @@ def export_conversation_to_markdown(
             lines.append(f"> {content}")
             lines.append("")
         elif role == "assistant":
-            lines.append(f"### LegalEagle Response{time_display}")
+            lines.append(f"### LegalDocuLex-AI Response{time_display}")
             lines.append(content)
             lines.append("")
 
@@ -386,7 +404,7 @@ def export_conversation_to_markdown(
 
     lines.extend([
         "### Legal Disclaimer",
-        "LegalEagle is an AI-powered document exploration tool built for informational and assistive purposes.",
+        "LegalDocuLex-AI is an AI-powered document exploration tool built for informational and assistive purposes.",
         "It does NOT provide formal legal advice, representation, or binding legal analysis.",
         "Always consult a licensed attorney for formal contract reviews or legal counsel.",
         "",
@@ -410,7 +428,7 @@ def export_conversation_to_text(
 
     lines = [
         divider,
-        "LEGALEAGLE AI CONTRACT ASSISTANT - CONVERSATION TRANSCRIPT",
+        "LEGALDOCULEX-AI AI CONTRACT ASSISTANT - CONVERSATION TRANSCRIPT",
         f"Generated: {timestamp_str}",
         f"Active Document Context: {document_filter or 'All Documents'}",
         divider,
@@ -429,7 +447,7 @@ def export_conversation_to_text(
             lines.append(content)
             lines.append("")
         elif role == "assistant":
-            lines.append(f"LEGALEAGLE ANSWER{time_display}:")
+            lines.append(f"LEGALDOCULEX-AI ANSWER{time_display}:")
             lines.append(content)
             lines.append("")
 
@@ -452,7 +470,7 @@ def export_conversation_to_text(
     lines.extend([
         divider,
         "LEGAL DISCLAIMER:",
-        "LegalEagle is an AI-powered tool for informational and document exploration purposes.",
+        "LegalDocuLex-AI is an AI-powered tool for informational and document exploration purposes.",
         "It does NOT provide formal legal advice or representation. Consult a qualified attorney.",
         divider,
     ])

@@ -1,5 +1,5 @@
 # ============================================================
-# LegalEagle - Requirements
+# LegalDocuLex-AI - Requirements
 # ============================================================
 # This file lists every Python package the project needs.
 # Install them all at once with:

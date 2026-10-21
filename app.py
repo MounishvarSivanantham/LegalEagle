@@ -1,7 +1,7 @@
 # ============================================================
-# app.py  –  LegalEagle: AI-Powered Contract Assistant
+# app.py  –  LegalDocuLex-AI: AI-Powered Contract Assistant
 # ============================================================
-# Step 6: Polished Interface & Document / Chat Management
+# Step 7: Automated Testing, RAG Evaluation, Security & Reliability
 #
 # Key Features:
 #   1. Responsive Navy/White/Blue Theme with Sidebar Navigation:
@@ -12,6 +12,7 @@
 #   3. ChromaDB Document Management & Document-Specific Filtering.
 #   4. Safe Deletion of only selected document's vectors.
 #   5. Strictly grounded citations with page references & excerpts.
+#   6. Automated Pytest Testing, RAG Benchmarking & Security Hardening.
 #
 # Run with:
 #     streamlit run app.py
@@ -48,7 +49,7 @@ from services.qa import (
 
 # ── 1. Streamlit Page Configuration ───────────────────────────
 st.set_page_config(
-    page_title="LegalEagle – AI Contract Assistant",
+    page_title="LegalDocuLex-AI – AI Contract Assistant",
     page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -236,7 +237,7 @@ init_session_state()
 
 # ── 4. Sidebar: Navigation, Document Overview & Settings ─────
 with st.sidebar:
-    st.markdown("## ⚖️ LegalEagle")
+    st.markdown("## ⚖️ LegalDocuLex-AI")
     st.markdown(
         "<p style='color:#94A3B8; font-size:0.85rem; margin-top:-0.5rem;'>"
         "AI-Powered Legal Contract Assistant</p>",
@@ -292,25 +293,64 @@ with st.sidebar:
     st.markdown("### 🔑 API Configuration")
     detected_key = get_openai_api_key()
     if detected_key:
-        st.success("OpenAI Key Active ✅")
+        masked_key = detected_key[:7] + "..." + detected_key[-4:] if len(detected_key) > 12 else "Loaded"
+        st.caption(f"Active Key: `{masked_key}`")
     else:
         st.warning("OpenAI Key Missing ⚠️")
-        user_key = st.text_input(
-            "Session API Key:",
+
+    with st.expander("⚙️ Update / Test OpenAI Key", expanded=(not detected_key)):
+        new_key = st.text_input(
+            "OpenAI API Key:",
             type="password",
             placeholder="sk-proj-...",
-            help="Set your OpenAI API key for this session. Alternatively, set OPENAI_API_KEY in your .env file.",
+            help="Enter an OpenAI API key with active billing credits.",
             key="sidebar_user_key",
         )
-        if user_key and user_key.strip():
-            os.environ["OPENAI_API_KEY"] = user_key.strip()
-            st.rerun()
+        col_k1, col_k2 = st.columns(2)
+        with col_k1:
+            if st.button("💾 Save Key", use_container_width=True, type="primary"):
+                if new_key and new_key.strip():
+                    clean_k = new_key.strip()
+                    os.environ["OPENAI_API_KEY"] = clean_k
+                    try:
+                        with open(".env", "w", encoding="utf-8") as f:
+                            f.write(f"# LegalDocuLex-AI OpenAI API Configuration\nOPENAI_API_KEY={clean_k}\n")
+                    except Exception:
+                        pass
+                    st.success("Key saved! ✅")
+                    st.rerun()
+                else:
+                    st.warning("Enter a key first.")
+        with col_k2:
+            if st.button("🧪 Test Key", use_container_width=True):
+                k_to_test = new_key.strip() if new_key and new_key.strip() else detected_key
+                if not k_to_test:
+                    st.warning("No key found to test.")
+                else:
+                    try:
+                        import openai
+                        client_test = openai.OpenAI(api_key=k_to_test)
+                        # Lightweight call to verify quota & validity
+                        client_test.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=[{"role": "user", "content": "test"}],
+                            max_tokens=2,
+                        )
+                        st.success("Key & Quota Verified! ✅")
+                    except Exception as err:
+                        err_msg = str(err).lower()
+                        if "insufficient_quota" in err_msg or "quota" in err_msg or "credits" in err_msg:
+                            st.error("Quota Exceeded (0 credits) ❌\nAdd credits at platform.openai.com/settings/organization/billing")
+                        elif "invalid" in err_msg or "auth" in err_msg:
+                            st.error("Invalid API Key ❌")
+                        else:
+                            st.error(f"API Error: {err}")
 
     # Footer note
     st.markdown("<br>" * 2, unsafe_allow_html=True)
     st.markdown(
         "<p style='color:#475569; font-size:0.75rem; text-align:center;'>"
-        "LegalEagle v0.6 · Step 6<br>For informational use only</p>",
+        "LegalDocuLex-AI v0.7 · Step 7<br>For informational use only</p>",
         unsafe_allow_html=True,
     )
 
@@ -320,11 +360,11 @@ st.markdown(
     """
     <div class="main-header">
         <div>
-            <h1>⚖️ LegalEagle</h1>
+            <h1>⚖️ LegalDocuLex-AI</h1>
             <div class="tagline">Grounded Contract Analysis & Intelligent Clause Retrieval</div>
         </div>
         <div>
-            <span class="badge-primary">v0.6 Active</span>
+            <span class="badge-primary">v0.7 Active</span>
         </div>
     </div>
     """,
@@ -335,7 +375,7 @@ st.markdown(
 # ── 6. Page Renderers ─────────────────────────────────────────
 
 def render_chat_page():
-    """Render the primary LegalEagle conversational interface."""
+    """Render the primary LegalDocuLex-AI conversational interface."""
     st.markdown("### 💬 Contract Assistant Chat")
 
     # Fetch currently indexed documents for the filter selector
@@ -381,7 +421,7 @@ def render_chat_page():
             st.download_button(
                 label="📥 Export Chat (.md)",
                 data=md_content,
-                file_name=f"legaleagle_transcript_{time_tag}.md",
+                file_name=f"legaldoculex_transcript_{time_tag}.md",
                 mime="text/markdown",
                 use_container_width=True,
                 help="Download full conversation transcript with citations and without secrets.",
@@ -402,7 +442,7 @@ def render_chat_page():
             """
             <div style="background:#0F172A; border:1px solid #1E293B; border-radius:10px; padding:2rem; text-align:center; color:#94A3B8; margin:1rem 0;">
                 <div style="font-size:2.5rem; margin-bottom:0.5rem;">🦅</div>
-                <h3 style="color:#F8FAFC; margin:0.25rem 0;">Welcome to LegalEagle</h3>
+                <h3 style="color:#F8FAFC; margin:0.25rem 0;">Welcome to LegalDocuLex-AI</h3>
                 <p style="margin:0;">Ask any question about your contracts. Answers are strictly grounded in retrieved clauses with verified page citations.</p>
             </div>
             """,
@@ -435,7 +475,7 @@ def render_chat_page():
                     st.write(content)
             else:
                 with st.chat_message("assistant"):
-                    st.markdown(f"**LegalEagle**{time_display}", unsafe_allow_html=True)
+                    st.markdown(f"**LegalDocuLex-AI**{time_display}", unsafe_allow_html=True)
                     st.write(content)
 
                     # Persistent Citations / Source References
@@ -487,13 +527,22 @@ def render_chat_page():
 
         # 3. Append assistant turn
         if qa_res.error:
-            st.session_state.chat_history.append({
-                "role": "assistant",
-                "content": f"⚠️ **Notice:** {qa_res.error}",
-                "sources": qa_res.sources,
-                "timestamp": now_str,
-                "is_error": True,
-            })
+            if qa_res.answer:
+                st.session_state.chat_history.append({
+                    "role": "assistant",
+                    "content": f"⚠️ **Notice:** {qa_res.error}\n\n{qa_res.answer}",
+                    "sources": qa_res.sources,
+                    "timestamp": now_str,
+                    "is_error": False,
+                })
+            else:
+                st.session_state.chat_history.append({
+                    "role": "assistant",
+                    "content": f"⚠️ **Notice:** {qa_res.error}",
+                    "sources": qa_res.sources,
+                    "timestamp": now_str,
+                    "is_error": True,
+                })
         else:
             st.session_state.chat_history.append({
                 "role": "assistant",
@@ -762,15 +811,15 @@ def render_documents_page():
 
 def render_about_page():
     """Render educational explanation of RAG and qualified legal disclaimer."""
-    st.markdown("### ℹ️ About LegalEagle & RAG Architecture")
+    st.markdown("### ℹ️ About LegalDocuLex-AI & RAG Architecture")
 
     # Legal Disclaimer Banner
     st.markdown(
         """
         <div class="disclaimer-banner">
             <strong>⚠️ IMPORTANT LEGAL DISCLAIMER:</strong><br>
-            LegalEagle is an AI-powered document exploration and assistive technology tool designed for informational and educational purposes only.
-            <strong>LegalEagle does NOT provide legal advice, legal opinions, or formal attorney representation.</strong>
+            LegalDocuLex-AI is an AI-powered document exploration and assistive technology tool designed for informational and educational purposes only.
+            <strong>LegalDocuLex-AI does NOT provide legal advice, legal opinions, or formal attorney representation.</strong>
             Contract terms, liability limitations, and legal obligations are complex and subject to jurisdictional laws.
             Users should never rely on AI outputs as a substitute for counsel from a qualified, licensed attorney.
         </div>
@@ -779,10 +828,10 @@ def render_about_page():
     )
 
     st.markdown("---")
-    st.markdown("#### 🏗️ How Retrieval-Augmented Generation (RAG) Works in LegalEagle")
+    st.markdown("#### 🏗️ How Retrieval-Augmented Generation (RAG) Works in LegalDocuLex-AI")
     st.markdown(
         "Standard large language models (LLMs) can hallucinate details or fail to recall exact clauses from lengthy agreements. "
-        "LegalEagle implements a grounded **Retrieval-Augmented Generation (RAG)** pipeline to guarantee factual fidelity:"
+        "LegalDocuLex-AI implements a grounded **Retrieval-Augmented Generation (RAG)** pipeline to guarantee factual fidelity:"
     )
 
     col1, col2 = st.columns(2)
@@ -808,7 +857,7 @@ def render_about_page():
             Vectors and rich metadata (filename, page number, chunk ID) are stored in a persistent local **ChromaDB** collection with HNSW cosine similarity search.
 
             ##### 5. 🔍 Semantic Retrieval
-            When a question is asked, LegalEagle converts the query into an embedding and retrieves the top-K most relevant contract excerpts.
+            When a question is asked, LegalDocuLex-AI converts the query into an embedding and retrieves the top-K most relevant contract excerpts.
 
             ##### 6. ⚖️ Grounded LLM Response
             Retrieved passages feed into OpenAI `gpt-4o-mini` with strict system instructions: explain in plain English, cite exact page numbers, acknowledge insufficient evidence, and never fabricate citations.
@@ -822,7 +871,7 @@ def render_about_page():
         - **Local Vector Storage:** Embeddings and indexed chunks remain in your local workspace directory (`chroma_db`).
         - **Document Isolation & Safe Deletion:** Re-indexing replaces only that document's records, and deletion safely removes only the chosen contract without wiping other documents.
         - **Zero Secret Leakage:** API keys are read from environment variables or Streamlit secrets and are strictly excluded from conversation exports, logs, and UI displays.
-        - **Accurate Citations:** LegalEagle cites only filenames and pages present in retrieved passages.
+        - **Accurate Citations:** LegalDocuLex-AI cites only filenames and pages present in retrieved passages.
         """
     )
 

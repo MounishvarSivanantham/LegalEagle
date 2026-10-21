@@ -318,7 +318,7 @@ def test_semantic_search_with_sample_contract():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  LEGALEAGLE STAGE 4 TEST SUITE: CHROMADB & SEMANTIC SEARCH")
+    print("  LEGALDOCULEX-AI STAGE 4 TEST SUITE: CHROMADB & SEMANTIC SEARCH")
     print("=" * 60)
 
     t1 = test_empty_collection_and_queries()

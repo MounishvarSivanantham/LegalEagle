@@ -345,7 +345,7 @@ def test_conversation_export():
         sample_history, document_filter="sample_contract.pdf"
     )
 
-    assert "# LegalEagle" in md_output
+    assert "# LegalDocuLex-AI" in md_output
     assert "What is the termination period?" in md_output
     assert "Either party may terminate with 30 days notice" in md_output
     assert "`sample_contract.pdf` (Page 2)" in md_output
@@ -359,10 +359,10 @@ def test_conversation_export():
         sample_history, document_filter="sample_contract.pdf"
     )
 
-    assert "LEGALEAGLE AI CONTRACT ASSISTANT" in txt_output
+    assert "LEGALDOCULEX-AI AI CONTRACT ASSISTANT" in txt_output
     assert "QUESTION 1" in txt_output
     assert "What is the termination period?" in txt_output
-    assert "LEGALEAGLE ANSWER" in txt_output
+    assert "LEGALDOCULEX-AI ANSWER" in txt_output
     assert "File: sample_contract.pdf | Page: 2" in txt_output
     assert "LEGAL DISCLAIMER" in txt_output
 
@@ -379,7 +379,7 @@ def test_conversation_export():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  LEGALEAGLE STAGE 6 TEST SUITE: INTERFACE & MANAGEMENT")
+    print("  LEGALDOCULEX-AI STAGE 6 TEST SUITE: INTERFACE & MANAGEMENT")
     print("=" * 60)
 
     t1 = test_document_filtering_and_metadata()

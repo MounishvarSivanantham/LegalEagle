@@ -1,6 +1,6 @@
-# ⚖️ LegalEagle – AI-Powered Contract Assistant
+# ⚖️ LegalDocuLex-AI – AI-Powered Contract Assistant
 
-**LegalEagle** is a local, privacy-focused legal contract assistant powered by **Retrieval-Augmented Generation (RAG)**. It allows users to upload PDF contracts, inspect extracted clauses with exact pagination, generate dense vector embeddings, perform semantic search, and ask natural language questions with strict grounding and verifiable page citations.
+**LegalDocuLex-AI** is a local, privacy-focused legal contract assistant powered by **Retrieval-Augmented Generation (RAG)**. It allows users to upload PDF contracts, inspect extracted clauses with exact pagination, generate dense vector embeddings, perform semantic search, and ask natural language questions with strict grounding and verifiable page citations.
 
 ---
 
@@ -59,7 +59,7 @@ Create a `.env` file in the project root:
 ```env
 OPENAI_API_KEY=your_openai_api_key_here
 ```
-> **Security Notice:** `.env` is strictly excluded by `.gitignore` and is never committed. LegalEagle never prints, logs, or exports secret keys.
+> **Security Notice:** `.env` is strictly excluded by `.gitignore` and is never committed. LegalDocuLex-AI never prints, logs, or exports secret keys.
 
 ### 4. Running the Web Application
 ```powershell
@@ -71,7 +71,7 @@ Open your browser at `http://localhost:8501`.
 
 ## 🧪 Testing & Automated Verification
 
-LegalEagle features a multi-tiered test suite categorized into fast, offline unit tests, security audits, and quantitative RAG evaluations.
+LegalDocuLex-AI features a multi-tiered test suite categorized into fast, offline unit tests, security audits, and quantitative RAG evaluations.
 
 ### 1. Fast Unit Tests (Offline, Mocked APIs)
 Runs in seconds with **zero network calls and no model downloads**:
@@ -148,10 +148,10 @@ The quantitative evaluation was conducted using `eval_dataset.json` across 6 tes
 - **Untrusted Input Defense:** The system prompt treats all extracted contract text as untrusted source material and explicitly refuses instructions embedded inside contract text.
 - **Targeted Deletion Isolation:** Deleting a document removes only its specific vector IDs from ChromaDB. Other contracts and the database collection remain completely unaffected.
 - **Upload Guardrails:** Configurable upload size limit (`DEFAULT_MAX_PDF_SIZE_BYTES = 25 MB`) prevents memory exhaustion and denial-of-service attacks.
-- **No Compliance Claims:** LegalEagle has not undergone independent third-party security audits (e.g. SOC2, ISO 27001, HIPAA) and makes no claims of formal regulatory compliance.
+- **No Compliance Claims:** LegalDocuLex-AI has not undergone independent third-party security audits (e.g. SOC2, ISO 27001, HIPAA) and makes no claims of formal regulatory compliance.
 
 ---
 
 ## ⚠️ Legal Disclaimer
 
-LegalEagle is an educational and assistive prototype designed solely for document exploration and research. **LegalEagle does NOT provide legal advice, legal representation, or formal attorney opinions.** Users must never rely on automated AI outputs as a substitute for counsel from a qualified, licensed attorney.
+LegalDocuLex-AI is an educational and assistive prototype designed solely for document exploration and research. **LegalDocuLex-AI does NOT provide legal advice, legal representation, or formal attorney opinions.** Users must never rely on automated AI outputs as a substitute for counsel from a qualified, licensed attorney.

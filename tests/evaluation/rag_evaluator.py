@@ -224,7 +224,7 @@ def run_rag_evaluation(top_k: int = 3) -> Dict[str, Any]:
 def print_evaluation_report(metrics: Dict[str, Any]):
     """Print formatted evaluation report with real numbers and disclaimer."""
     print("\n" + "=" * 70)
-    print("       LEGALEAGLE RAG BENCHMARK & EVALUATION REPORT")
+    print("       LEGALDOCULEX-AI RAG BENCHMARK & EVALUATION REPORT")
     print("=" * 70)
     print(f"  Benchmark Dataset:  eval_dataset.json ({metrics['total_test_cases']} queries)")
     print(f"  Synthetic Contract: synthetic_contract.pdf (3 pages, 3 chunks)")
@@ -251,6 +251,6 @@ def print_evaluation_report(metrics: Dict[str, Any]):
 
 
 if __name__ == "__main__":
-    print("Initializing LegalEagle Synthetic RAG Evaluation...")
+    print("Initializing LegalDocuLex-AI Synthetic RAG Evaluation...")
     metrics = run_rag_evaluation(top_k=3)
     print_evaluation_report(metrics)

@@ -181,7 +181,7 @@ def test_mocked_successful_answer():
     call_args = mock_client.chat.completions.create.call_args[1]
     messages = call_args["messages"]
     assert len(messages) == 2
-    assert "LegalEagle" in messages[0]["content"]
+    assert "LegalDocuLex-AI" in messages[0]["content"]
     assert "service_agreement.pdf" in messages[1]["content"]
 
     print("  [OK] Mocked OpenAI response grounded, cited, and returned accurately.")
@@ -285,7 +285,7 @@ def test_prompt_formatting_and_citations():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  LEGALEAGLE STAGE 5 TEST SUITE: LLM QUESTION ANSWERING")
+    print("  LEGALDOCULEX-AI STAGE 5 TEST SUITE: LLM QUESTION ANSWERING")
     print("=" * 60)
 
     t1 = test_empty_question_validation()

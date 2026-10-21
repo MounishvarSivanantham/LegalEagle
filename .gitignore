@@ -10,3 +10,5 @@ tests/**/eval_chroma_db/
 tests/**/test_chroma_db/
 tests/**/test_chroma_db_qa/
 tests/**/test_chroma_db_stage6/
+*.secret
+.secret

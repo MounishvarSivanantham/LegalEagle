@@ -226,7 +226,7 @@ def test_end_to_end_sample_contract():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  LEGALEAGLE STAGE 3 TEST SUITE: CHUNKING & EMBEDDINGS")
+    print("  LEGALDOCULEX-AI STAGE 3 TEST SUITE: CHUNKING & EMBEDDINGS")
     print("=" * 60)
 
     t1 = test_chunking_word_count_and_overlap()
