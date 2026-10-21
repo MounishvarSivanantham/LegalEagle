@@ -1,0 +1,30 @@
+# ============================================================
+# LegalEagle - Requirements
+# ============================================================
+# This file lists every Python package the project needs.
+# Install them all at once with:
+#     pip install -r requirements.txt
+# ============================================================
+
+# Streamlit – the web-app framework that powers the dashboard
+streamlit>=1.30.0
+
+# PyMuPDF – fast PDF text extraction (imported as "fitz")
+PyMuPDF>=1.23.0
+
+# sentence-transformers – generate dense vector embeddings (all-MiniLM-L6-v2)
+sentence-transformers>=2.2.2
+
+# chromadb – persistent vector database for semantic search
+chromadb>=0.4.22
+
+# openai – official OpenAI Python SDK for LLM question answering
+openai>=1.0.0
+
+# python-dotenv – load API keys from local .env files
+python-dotenv>=1.0.0
+
+# pytest – automated test framework for unit and integration testing
+pytest>=7.4.0
+
+

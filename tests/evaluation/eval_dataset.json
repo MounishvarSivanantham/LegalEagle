@@ -1,0 +1,75 @@
+[
+  {
+    "id": "eval_01_payment_fee",
+    "category": "compensation",
+    "question": "What is the fixed monthly base service fee and the invoice payment schedule?",
+    "expected_page": 2,
+    "expected_facts": [
+      "$18,500",
+      "Net 30",
+      "monthly"
+    ],
+    "is_answerable": true,
+    "description": "Validates extraction of base monthly service fee ($18,500) and Net 30 payment schedule on Page 2."
+  },
+  {
+    "id": "eval_02_security_retainer",
+    "category": "compensation",
+    "question": "Is an initial security retainer deposit required, and what is the exact amount?",
+    "expected_page": 2,
+    "expected_facts": [
+      "$7,500",
+      "retainer"
+    ],
+    "is_answerable": true,
+    "description": "Validates extraction of the $7,500 security retainer deposit clause on Page 2."
+  },
+  {
+    "id": "eval_03_termination_convenience",
+    "category": "termination",
+    "question": "How many days of written notice are required to terminate the contract for convenience?",
+    "expected_page": 3,
+    "expected_facts": [
+      "45",
+      "written notice"
+    ],
+    "is_answerable": true,
+    "description": "Validates extraction of 45 calendar days written notice for convenience termination on Page 3."
+  },
+  {
+    "id": "eval_04_confidentiality_survival",
+    "category": "confidentiality",
+    "question": "How long do the confidentiality covenants survive after the expiration or termination of the agreement?",
+    "expected_page": 3,
+    "expected_facts": [
+      "three (3) years",
+      "confidentiality"
+    ],
+    "is_answerable": true,
+    "description": "Validates extraction of the three (3) years confidentiality survival period on Page 3."
+  },
+  {
+    "id": "eval_05_governing_law",
+    "category": "jurisdiction",
+    "question": "Which state laws and county court jurisdiction govern this agreement?",
+    "expected_page": 3,
+    "expected_facts": [
+      "Delaware",
+      "New Castle County"
+    ],
+    "is_answerable": true,
+    "description": "Validates extraction of State of Delaware and New Castle County jurisdiction on Page 3."
+  },
+  {
+    "id": "eval_06_unrelated_out_of_domain",
+    "category": "out_of_domain",
+    "question": "What are the rules regarding employee stock option vesting, maternity leave, and 401(k) matching?",
+    "expected_page": null,
+    "expected_facts": [
+      "insufficient",
+      "not contain sufficient"
+    ],
+    "is_answerable": false,
+    "description": "Out-of-domain negative test: verifies that the system detects insufficient evidence and does not hallucinate facts."
+  }
+]
